@@ -22,27 +22,31 @@ st.title("Salary prediction app")
 
 age = st.number_input("Age", min_value=18, max_value=60)
 gender = st.selectbox("Gender",encoder["Gender"].classes_)
-eduction = st.selectbox("Eduction Level",encoder["Eduction Level".classes_])
+education = st.selectbox("Education Level",encoder["Education Level".classes_])
 job_title = st.selectbox("Job Title",encoder["Job Title"].classes_)
 years_of_experience = st.number_input("Years of Experience", min_value=0, max_value=30)
 
 df = pd.dataFrame({
     "Age":[age],
     "Gender":[gender],
-    "Eduction Level":[eduction],
+    "Education Level":[education],
     "Job Title":[job_title],
     "Years of Experience":years_of_experience
 
 })
 
-
 if st.button("Predict"):
-  for col in encoder.keys():
-    df[col] = encoder[col].transform(df[col])
+    
+    # Encode categorical columns
+    for col in encoder:
+        df[col] = encoder[col].transform(df[col])
+    
+    # Ensure correct column order (very important)
+    df = df[model.feature_names_in_]
 
     prediction = model.predict(df)
-    st.success(f"Predicted Salary: {prediction[0]:,.2f}")
-
+    
+    st.success(f"Predicted Salary: ₹ {prediction[0]:,.2f}")
 
 
 
